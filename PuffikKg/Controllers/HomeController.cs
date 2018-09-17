@@ -25,6 +25,7 @@ namespace PuffikKg.Controllers
             var text = $@"
             Вам письмо от {contactName},
             Телефон: {contactPhone},
+            Email: {contactEmail},
             Текст:
             {contactMessage}
         ";
