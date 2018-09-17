@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PuffikKg.Data;
 using PuffikKg.Models;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace PuffikKg.Controllers
 {
@@ -13,6 +15,33 @@ namespace PuffikKg.Controllers
     {
         public IActionResult Index()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Index(string contactName, string contactEmail, string contactPhone, string contactMessage)
+        {
+            var message = new MimeMessage();
+            var text = $@"
+            Вам письмо от {contactName},
+            Телефон: {contactPhone},
+            Текст:
+            {contactMessage}
+        ";
+            message.From.Add(new MailboxAddress("Sender", contactEmail));
+            message.To.Add(new MailboxAddress("ComfyBag", "comfybag.bishkek@gmail.com"));
+            message.Subject = "ComfyBag Mail";
+            message.Body = new TextPart("plain")
+            {
+                Text = text
+            };
+            using (var client = new SmtpClient())
+            {
+                client.Connect("smtp.gmail.com", 587, false);
+                client.Authenticate("comfybag.bishkek@gmail.com", password);
+                client.Send(message);
+                client.Disconnect(true);
+            }
             return View();
         }
 
